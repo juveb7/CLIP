@@ -339,7 +339,7 @@ class CLIP(nn.Module):
 
     def encode_image(self, image):
         return self.visual(image.type(self.dtype))
-    
+
     def encode_text(self, text, local=False):
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx, d_model]
 
@@ -352,12 +352,12 @@ class CLIP(nn.Module):
         if local:
             x = x @ self.text_projection
         else:
-        # x.shape = [batch_size, n_ctx, transformer.width]
-        # take features from the eot embedding (eot_token is the highest number in each sequence)
+            # x.shape = [batch_size, n_ctx, transformer.width]
+            # take features from the eot embedding (eot_token is the highest number in each sequence)
             x = x[torch.arange(x.shape[0]), text.argmax(dim=-1)] @ self.text_projection
-  
-        return x
     
+        return x
+
     def forward(self, image, text):
         image_features = self.encode_image(image)
         text_features = self.encode_text(text)
